@@ -99,11 +99,11 @@ def writeToDb(jsonData, tableName):
     print("Beginning write to db...")
     client = boto3.client('dynamodb')
     for obj in jsonData:
-        ddbWriteOb = {"id": {"S": uuid.uuid4().hex}}
+        ddbWriteOb = {"id": {"S": uuid.uuid4().hex}} #Assign random hex as the id of the record in ddb
         for key, value in obj.items():
             ddbWriteOb[key] = {"S": str(value)}
         r = client.put_item(
             TableName=tableName,
             Item=ddbWriteOb
         )
-    print("Completed write to db.")
+    print(f"Completed write to db. Written {len(jsonData)} items.")
