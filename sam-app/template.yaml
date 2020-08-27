@@ -5,10 +5,10 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
 
 Resources:
-  HelloWorldFunction:
+  dataFetchFunction:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: ognDataFetchFunction
