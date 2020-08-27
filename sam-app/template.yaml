@@ -15,3 +15,10 @@ Resources:
       CodeUri: fetchData/
       Handler: app.lambda_handler
       Runtime: python3.7
+      Environment:
+        Variables:
+          loMax: 3.6474609375000004
+          loMin: -13.710937500000002
+          laMax: 59.355596110016315
+          laMin: 49.61070993807422
+          tableName: flarmData
