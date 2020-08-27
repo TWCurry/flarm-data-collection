@@ -24,20 +24,21 @@ def lambda_handler(event, context):
             "body": f"Error fetching data from OGN - {e}"
         }
     
-    # Convert to sorta json document to write to DDB
+    # Convert to json document
     try:
-        convertXml2Json(xmlData)
+        jsonObjects = convertXml2Json(xmlData)
     except Exception as e:
-        print(f"Could not convert XML to ddb json - {e}")
+        print(f"Could not convert XML to json - {e}")
         return{
             "statusCode": 500,
             "body": f"Error converting data from XML - {e}"
         }
-
+    
     return {
         "statusCode": 200,
         "body": "Function executed successfully"
     }
+
 
 def fetchData(loMax, loMin, laMax, laMin):
     print("Fetching XML data...")
@@ -56,5 +57,28 @@ def fetchData(loMax, loMin, laMax, laMin):
     return r.text
 
 def convertXml2Json(xmlData):
+    outputJson = []
+    markerSection = False
     for line in xmlData.splitlines():
-        print(line)
+        if line == "</markers>": #If we've reached the end of the data, we don't need to care about the rest of the loop
+            break
+
+        if markerSection == True: # Only care about the lines in the marker section 
+            lineData = line[6:-3].split(",")
+            outputJson.append({
+                "latitude": lineData[0],
+                "longitude": lineData[1],
+                "trigraph": lineData[2],
+                "acId": lineData[3],
+                "altitude": lineData[4],
+                "time": lineData[5],
+                "track": lineData[7],
+                "gSpeed": lineData[8],
+                "vSpeed": lineData[9],
+                "receiver": lineData[11],
+                "hex": lineData[13]
+            })
+
+        if line == "<markers>":
+            markerSection = True
+    return outputJson
