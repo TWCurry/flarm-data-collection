@@ -8,6 +8,10 @@ Globals:
     Timeout: 20
 
 Resources:
+
+  #### Functions ####
+
+  # Function to fetch data from OGN and store in DDB
   dataFetchFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -24,3 +28,28 @@ Resources:
           tableName: flarmData
       Policies:
         - AmazonDynamoDBFullAccess
+
+  schedulingFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: ognSchedulingFunction
+      CodeUri: schedulingFunction/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          functionToTrigger: !Ref dataFetchFunction
+          queueUrl: !Ref schedulingQueue
+      Policies:
+        - AmazonSQSFullAccess
+
+  #### SQS Queue ####
+
+  schedulingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      FifoQueue: False
+      MessageRetentionPeriod: 60 # No message should need to exist for more than a minute
+      QueueName: ognFunctionSchedulingQueue
+      RedrivePolicy: Json
+      VisibilityTimeout: 60 # Long enough that the message will be hidden until it's retention period has passed

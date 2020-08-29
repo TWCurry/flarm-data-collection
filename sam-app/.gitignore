@@ -245,3 +245,6 @@ $RECYCLE.BIN/
 
 fetchData/*
 !fetchData/app.py
+
+schedulingFunction/*
+!schedulingFunction/app.py
