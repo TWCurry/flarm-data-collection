@@ -243,8 +243,8 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 
-fetchData/*
-!fetchData/app.py
+lambdaCode/*
+!lambdaCode/dataFetchFunction.py
+!lambdaCode/schedulingFunction.py
 
-schedulingFunction/*
-!schedulingFunction/app.py
+*.zip
