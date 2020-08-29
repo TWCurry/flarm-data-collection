@@ -25,6 +25,7 @@ Resources:
       Policies:
       - AmazonDynamoDBFullAccess
       - AmazonSQSFullAccess
+      - CloudWatchLogsFullAccess
   schedulingFunction:
     Type: AWS::Serverless::Function 
     Properties:
