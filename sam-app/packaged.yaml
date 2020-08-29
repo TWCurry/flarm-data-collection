@@ -23,6 +23,7 @@ Resources:
           tableName: flarmData
       Policies:
       - AmazonDynamoDBFullAccess
+      - AmazonSQSFullAccess
   schedulingFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -43,3 +44,11 @@ Resources:
       MessageRetentionPeriod: 60 # No message should need to exist for more than a minute
       QueueName: ognFunctionSchedulingQueue
       VisibilityTimeout: 60 # Long enough that the message will be hidden until it's retention period has passed
+
+  queueLambdaMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties: 
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn: !GetAtt schedulingQueue.Arn
+      FunctionName: !Ref dataFetchFunction

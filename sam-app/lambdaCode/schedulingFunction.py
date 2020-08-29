@@ -5,7 +5,6 @@ def lambda_handler(event, context):
     try:
         functionName = os.environ["functionToTrigger"]
         queueUrl = os.environ["queueUrl"]
-        print(queueUrl)
     except Exception as e:
         return {
             "statusCode": 400,
@@ -26,4 +25,5 @@ def lambda_handler(event, context):
         "body": "Function executed successfully"
     }
 
-# def scheduleLambdas(functionName):
+def scheduleLambdas(functionName):
+    client = boto3.client('sqs')
