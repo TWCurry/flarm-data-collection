@@ -1,4 +1,4 @@
-import os, boto3, requests, uuid
+import os, boto3, requests, uuid, time
 
 def lambda_handler(event, context):
     # Environment variables
@@ -8,12 +8,15 @@ def lambda_handler(event, context):
         laMax = os.environ["laMax"]
         laMin = os.environ["laMin"]
         tableName = os.environ["tableName"]
+        logGroupName = os.environ["logGroupName"]
     except Exception as e:
         return {
             "statusCode": 400,
             "body": f"Invalid environment variables - {e}"
         }
-    
+    # Log execution time
+    logExecution(logGroupName)
+
     # Fetch data
     try:
         xmlData = fetchData(loMax, loMin, laMax, laMin)
@@ -49,6 +52,26 @@ def lambda_handler(event, context):
         "body": "Function executed successfully"
     }
 
+def logExecution(logGroupName):
+    client = boto3.client('logs')
+    logStreamData = client.describe_log_streams(
+        logGroupName=logGroupName
+    )
+    uploadSequenceToken = logStreamData["logStreams"][0]["uploadSequenceToken"]
+    print(uploadSequenceToken)
+    timestamp = int(round(time.time() * 1000))
+    response = client.put_log_events(
+        logGroupName=logGroupName,
+        logStreamName="Executions",
+        logEvents=[
+            {
+                "timestamp": timestamp,
+                "message": f"Function executed at {str(time.strftime('%Y-%m-%d %H:%M:%S'))}UTC"
+            },
+        ],
+        sequenceToken=uploadSequenceToken
+    )
+    print(response)
 
 def fetchData(loMax, loMin, laMax, laMin):
     print("Fetching XML data...")

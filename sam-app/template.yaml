@@ -26,6 +26,7 @@ Resources:
           laMax: 59.355596110016315
           laMin: 49.61070993807422
           tableName: flarmData
+          logGroupName: ognDataFetchFunctionInvocations
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonSQSFullAccess

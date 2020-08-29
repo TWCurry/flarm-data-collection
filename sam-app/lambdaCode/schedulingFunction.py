@@ -26,7 +26,6 @@ def lambda_handler(event, context):
     }
 
 def scheduleLambdas(queueUrl, functionName):
-    queueUrl = "https://sqs.eu-west-2.amazonaws.com/841435671136/ognFunctionSchedulingQueue" ###REMOVE
     client = boto3.client('sqs')
     messages = []
     for i in range(10):
