@@ -5,14 +5,14 @@ Description: 'SAM Template to deploy API to store and fetch data from OGN
   '
 Globals:
   Function:
-    Timeout: 20
+    Timeout: 10
 Resources:
   dataFetchFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: ognDataFetchFunction
       CodeUri: s3://tc-airspace-data-cf-backend/lambdaCode
-      Handler: app.lambda_handler
+      Handler: dataFetchFunction.lambda_handler
       Runtime: python3.7
       Environment:
         Variables:

@@ -13,7 +13,7 @@ def lambda_handler(event, context):
 
     # Schedule lambdas
     try:
-        scheduleLambdas(functionName)
+        scheduleLambdas(queueUrl, functionName)
     except Exception as e:
         print(f"Could not post to SQS - {e}")
         return {
@@ -25,5 +25,28 @@ def lambda_handler(event, context):
         "body": "Function executed successfully"
     }
 
-def scheduleLambdas(functionName):
+def scheduleLambdas(queueUrl, functionName):
+    queueUrl = "https://sqs.eu-west-2.amazonaws.com/841435671136/ognFunctionSchedulingQueue" ###REMOVE
     client = boto3.client('sqs')
+    messages = []
+    for i in range(10):
+        messages.append({
+            "Id": str(i),
+            "MessageBody": f"Trigger for fetch lambda, delayed by {i*5} seconds",
+            "DelaySeconds": int(i)*5
+        })
+    messages2 = [] #Second set since send_message_batch can only handle 10 messages
+    for i in range(2):
+        messages2.append({
+            "Id": str(i),
+            "MessageBody": f"Trigger for fetch lambda, delayed by {(i+10)*5} seconds",
+            "DelaySeconds": (int(i)+10)*5
+        })
+    r = client.send_message_batch(
+        QueueUrl=queueUrl,
+        Entries=messages
+    )
+    r = client.send_message_batch(
+        QueueUrl=queueUrl,
+        Entries=messages2
+    )
