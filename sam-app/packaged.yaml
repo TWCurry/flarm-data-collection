@@ -39,6 +39,19 @@ Resources:
           queueUrl: !Ref schedulingQueue
       Policies:
         - AmazonSQSFullAccess
+  
+  fetchFlightDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ognFetchFlightDataFunction
+      CodeUri: s3://tc-airspace-data-cf-backend/lambdaCode
+      Handler: fetchFlightData.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          tableName: flarmData
+      Policies:
+      - AmazonDynamoDBFullAccess
     
   schedulingQueue:
     Type: AWS::SQS::Queue

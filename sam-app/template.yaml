@@ -5,7 +5,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 20
+    Timeout: 120
 
 Resources:
 
@@ -45,6 +45,19 @@ Resources:
           queueUrl: !Ref schedulingQueue
       Policies:
         - AmazonSQSFullAccess
+  
+  fetchFlightDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ognFetchFlightDataFunction
+      CodeUri: lambdaCode/
+      Handler: fetchFlightData.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          tableName: flarmData
+      Policies:
+      - AmazonDynamoDBFullAccess
 
   #### SQS Queue ####
 
