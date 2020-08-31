@@ -246,5 +246,6 @@ $RECYCLE.BIN/
 lambdaCode/*
 !lambdaCode/dataFetchFunction.py
 !lambdaCode/schedulingFunction.py
+!lambdaCode/fetchFlightData.py
 
 *.zip
