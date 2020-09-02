@@ -120,7 +120,7 @@ def convertXml2Json(xmlData):
 
 def writeToDb(jsonData, tableName):
     print("Beginning write to db...")
-    timestamp = int(round(time.time() * 1000))
+    timestamp = int(time.time())
     client = boto3.client('dynamodb')
     for obj in jsonData:
         ddbWriteOb = {"id": {"S": uuid.uuid4().hex}} #Assign random hex as the id of the record in ddb

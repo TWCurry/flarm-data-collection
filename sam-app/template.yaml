@@ -43,6 +43,13 @@ Resources:
         Variables:
           functionToTrigger: !Ref dataFetchFunction
           queueUrl: !Ref schedulingQueue
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(* 6-17 * * ? *)'
+            Name: ognDataFetchRule
+            Enabled: True
       Policies:
         - AmazonSQSFullAccess
   
@@ -58,6 +65,12 @@ Resources:
           tableName: flarmData
       Policies:
       - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /fetchFlightData
+            Method: get
 
   #### SQS Queue ####
 

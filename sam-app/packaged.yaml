@@ -39,6 +39,13 @@ Resources:
           queueUrl: !Ref schedulingQueue
       Policies:
         - AmazonSQSFullAccess
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(* 6-17 * * ? *)'
+            Name: ognDataFetchRule
+            Enabled: True
   
   fetchFlightDataFunction:
     Type: AWS::Serverless::Function
@@ -52,6 +59,12 @@ Resources:
           tableName: flarmData
       Policies:
       - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /fetchFlightData
+            Method: get
     
   schedulingQueue:
     Type: AWS::SQS::Queue
