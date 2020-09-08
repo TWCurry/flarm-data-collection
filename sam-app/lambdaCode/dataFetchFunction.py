@@ -121,14 +121,27 @@ def convertXml2Json(xmlData):
 def writeToDb(jsonData, tableName):
     print("Beginning write to db...")
     timestamp = int(time.time())
-    client = boto3.client('dynamodb')
+    dbObjs = [] #Array of ddb formatted data
+
+    #Create items to write
     for obj in jsonData:
         ddbWriteOb = {"id": {"S": uuid.uuid4().hex}} #Assign random hex as the id of the record in ddb
         ddbWriteOb["ttl"] = {"N": str(timestamp+172800)} #Add TTL of 2 days
         for key, value in obj.items():
+            if key == "trigraph" and value == "": value = "UNKNOWN"
+            if key == "acId" and value == "": value = "UNKNOWN"
             ddbWriteOb[key] = {"S": str(value)}
-        r = client.put_item(
-            TableName=tableName,
-            Item=ddbWriteOb
-        )
+        dbObjs.append(ddbWriteOb)
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(tableName)
+
+    for item in dbObjs:
+        print(f"{item['id']} {item['acId']} {item['trigraph']}")
+
+    #Batch write to db for improved performance
+    with table.batch_writer() as writer:
+        for item in dbObjs:
+            writer.put_item(Item=item)
+
     print(f"Completed write to db. Written {len(jsonData)} items.")

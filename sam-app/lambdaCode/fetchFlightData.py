@@ -1,4 +1,4 @@
-import os, boto3, sys
+import os, boto3, sys, json
 from boto3 import resource
 from boto3.dynamodb.conditions import Key
 
@@ -32,8 +32,12 @@ def lambda_handler(event, context):
     
     return{
         "statusCode": 200,
+        "isBase64Encoded": "false",
+        "headers": {
+            "Access-Control-Allow-Origin": "*"
+        },
         "body": {
-            "Items": flightData
+            "Items": json.dumps(flightData)
         }
     }
 
