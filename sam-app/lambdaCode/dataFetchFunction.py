@@ -58,7 +58,6 @@ def logExecution(logGroupName):
         logGroupName=logGroupName
     )
     uploadSequenceToken = logStreamData["logStreams"][0]["uploadSequenceToken"]
-    print(uploadSequenceToken)
     timestamp = int(round(time.time() * 1000))
     response = client.put_log_events(
         logGroupName=logGroupName,
@@ -71,7 +70,6 @@ def logExecution(logGroupName):
         ],
         sequenceToken=uploadSequenceToken
     )
-    print(response)
 
 def fetchData(loMax, loMin, laMax, laMin):
     print("Fetching XML data...")
@@ -125,23 +123,21 @@ def writeToDb(jsonData, tableName):
 
     #Create items to write
     for obj in jsonData:
-        ddbWriteOb = {"id": {"S": uuid.uuid4().hex}} #Assign random hex as the id of the record in ddb
-        ddbWriteOb["ttl"] = {"N": str(timestamp+172800)} #Add TTL of 2 days
+        ddbWriteOb = {"id": uuid.uuid4().hex} #Assign random hex as the id of the record in ddb
+        ddbWriteOb["ttl"] = str(timestamp+172800) #Add TTL of 2 days
         for key, value in obj.items():
             if key == "trigraph" and value == "": value = "UNKNOWN"
             if key == "acId" and value == "": value = "UNKNOWN"
-            ddbWriteOb[key] = {"S": str(value)}
+            ddbWriteOb[key] = str(value)
         dbObjs.append(ddbWriteOb)
 
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(tableName)
 
-    for item in dbObjs:
-        print(f"{item['id']} {item['acId']} {item['trigraph']}")
-
     #Batch write to db for improved performance
     with table.batch_writer() as writer:
         for item in dbObjs:
+            print(item)
             writer.put_item(Item=item)
 
     print(f"Completed write to db. Written {len(jsonData)} items.")
