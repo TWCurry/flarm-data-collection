@@ -36,9 +36,9 @@ def lambda_handler(event, context):
         "headers": {
             "Access-Control-Allow-Origin": "*"
         },
-        "body": {
+        "body": json.dumps({
             "Items": json.dumps(flightData)
-        }
+        })
     }
 
 def fetchData(tableName, aircraftId):

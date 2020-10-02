@@ -137,7 +137,6 @@ def writeToDb(jsonData, tableName):
     #Batch write to db for improved performance
     with table.batch_writer() as writer:
         for item in dbObjs:
-            print(item)
             writer.put_item(Item=item)
 
     print(f"Completed write to db. Written {len(jsonData)} items.")
